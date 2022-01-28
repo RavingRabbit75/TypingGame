@@ -4,7 +4,7 @@ import { Container } from "@pixi/display";
 import Invader from "./invader";
 import randomWords from "random-words";
 import MessageBox from "./message_box";
-
+import { sound } from '@pixi/sound';
 
 class GameScene {
     app: any;
@@ -23,11 +23,10 @@ class GameScene {
 
     init () {
         for (let x=0; x < 3; x++) {
-            let invader = new Invader();
+            let invader = new Invader(this.app);
             invader.sprite.y = -60;
-            invader.sprite.x = this.getRandomInt(10, 290);
+            invader.sprite.x = this.getRandomInt(10, this.app.screen.width);
             invader.speed = this.getRandomInt(1,9)/10;
-            console.log(invader.speed);
             invader.setWord(randomWords({exactly: 1, maxLength: 10})[0]);
             
             this.invaderList.push(invader);
@@ -73,7 +72,7 @@ class GameScene {
 
     private invaderLanded(): boolean {
         for (let x = 0; x < this.invaderList.length; x ++) {
-            if (this.invaderList[x].sprite.y > 249) {
+            if (this.invaderList[x].sprite.y > this.app.screen.height - this.invaderList[x].getHeight()) {
                 return true
             } 
         }
@@ -85,6 +84,7 @@ class GameScene {
         invader.sprite.y = -60;
         invader.sprite.x = this.getRandomInt(10, 290);
         invader.speed = this.getRandomInt(1,9)/10;
+        invader.die();
         invader.setWord(randomWords({exactly: 1, maxLength: 10})[0]);
     }
 
@@ -95,10 +95,11 @@ class GameScene {
     }
 
     private displayLoseGame() {
-        this.loseMessage.sprite.x = 150;
-        this.loseMessage.sprite.y = 120;
+        this.loseMessage.sprite.x = this.app.screen.width/2 - this.loseMessage.getWidth()/2;
+        this.loseMessage.sprite.y = this.app.screen.height/2 - this.loseMessage.getHeight()/2;
         this.app.stage.addChild(this.loseMessage.sprite);
         this.app.ticker.stop();
+        sound.play("youlose_snd");
     }
 
 

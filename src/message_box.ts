@@ -30,6 +30,14 @@ class MessageBox {
         this.sprite.addChild(this.text);
     }
 
+    getWidth(): number {
+        return this.sprite.width;
+    }
+
+    getHeight(): number {
+        return this.sprite.height;
+    }
+
 }
 
 export default MessageBox;

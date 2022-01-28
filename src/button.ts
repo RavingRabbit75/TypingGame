@@ -36,6 +36,14 @@ class Button {
     addToField(stage: Container) {
         stage.addChild(this.sprite);
     }
+
+    getWidth(): number {
+        return this.sprite.width;
+    }
+
+    getHeight(): number {
+        return this.sprite.height;
+    }
 }
 
 export default Button; 

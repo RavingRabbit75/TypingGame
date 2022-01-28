@@ -19,6 +19,7 @@
     "typescript": "^4.5.2"
   },
   "dependencies": {
+    "@pixi/sound": "^4.2.0",
     "pixi.js": "^6.2.0",
     "random-words": "^1.1.1"
   }
