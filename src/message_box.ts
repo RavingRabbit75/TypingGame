@@ -12,7 +12,7 @@ class MessageBox {
     
     constructor(displayText: string) {
         this.graphic = new Graphics();
-        this.graphic.beginFill(0x000000).lineStyle(2, 0xFF0000, 1).drawRoundedRect(0, 0, 99, 32, 16).endFill();
+        this.graphic.beginFill(0x000000).lineStyle(2, 0xFF0000, 1).drawRoundedRect(0, 0, 200, 100, 16).endFill();
         this.sprite.interactive = true;
         this.sprite.buttonMode = true;
         this.sprite.addChild(this.graphic);
@@ -20,7 +20,8 @@ class MessageBox {
         this.textStyle = new TextStyle({
             fontFamily: "Helvetica",
             fontSize: 12,
-            fill: 0xFF0000
+            fill: 0xFF0000,
+            align: "center"
         });
 
         this.text = new Text(displayText, this.textStyle);

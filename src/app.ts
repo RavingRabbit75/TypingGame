@@ -5,8 +5,6 @@ import * as PIXI from "pixi.js";
 import GameScene from "./game_scene";
 import StartScene from "./start_scene";
 
-
-
 const app = new PIXI.Application({
     width: 800,
     height: 600
@@ -23,9 +21,8 @@ app.loader
     .add("explosion_snd", "mixkit-arcade-game-explosion-2759.wav")
     .add("youlose_snd", "mixkit-8-bit-lose-2031.wav");
     
-
 app.loader.onProgress.add(showProgress);
-app.loader.onComplete.add(doneDonwloading);
+app.loader.onComplete.add(doneDownloading);
 app.loader.onError.add(reportError);
 
 app.loader.load();
@@ -38,20 +35,28 @@ function reportError(e: any) {
     console.log(e.error);
 }
 
-function doneDonwloading(e: any) {
-    console.log("LOADING DONE");
+function doneDownloading(e: any) {
 
     let startScene = new StartScene(app);
-    app.stage.addChild(startScene.scene);
-    window.addEventListener("keydown", onEnterDown);
+    let gameScene = new GameScene(app);
 
-    function onEnterDown(event: KeyboardEvent) {
+    app.stage.addChild(startScene.scene);
+
+    window.addEventListener("keydown", onEnterStartGame);
+
+    function onEnterStartGame(event: KeyboardEvent) {
         if (event.key === "Enter") {
             app.stage.removeChild(startScene.scene);
-            window.removeEventListener("keydown", onEnterDown);
+            window.removeEventListener("keydown", onEnterStartGame);
     
-            let gameScene = new GameScene(app);
             gameScene.init();
+            window.addEventListener("gameEnded", onGameSceneEnded);
         }
+    }
+
+    function onGameSceneEnded(e: Event) {
+        gameScene.destroy();
+        app.stage.addChild(startScene.scene);
+        window.addEventListener("keydown", onEnterStartGame);
     }
 }
