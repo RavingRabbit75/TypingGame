@@ -16,8 +16,9 @@ mainGameElem.appendChild(app.view);
 app.renderer.backgroundColor = 0x23395D;
 app.loader.baseUrl = "assets";
 app.loader
+    .add("ground01", "ground_01.png")
     .add("invader01", "invader_01.png")
-    .add("clouds01", "cloud_01.png")
+    .add("cloud01", "cloud_01.png")
     .add("explosion_snd", "mixkit-arcade-game-explosion-2759.wav")
     .add("youlose_snd", "mixkit-8-bit-lose-2031.wav");
     
@@ -56,6 +57,7 @@ function doneDownloading(e: any) {
 
     function onGameSceneEnded(e: Event) {
         gameScene.destroy();
+        app.renderer.backgroundColor = 0x23395D;
         app.stage.addChild(startScene.scene);
         window.addEventListener("keydown", onEnterStartGame);
     }

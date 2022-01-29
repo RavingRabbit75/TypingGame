@@ -4,13 +4,18 @@ import { Container } from "@pixi/display";
 import Invader from "./invader";
 import randomWords from "random-words";
 import MessageBox from "./message_box";
+import StaticBackground from "./static_background";
+import Cloud from "./cloud";
 import { sound } from '@pixi/sound';
 
 class GameScene {
     app: any;
     scene: Container;
+    background: StaticBackground;
     invaderList: Invader[] = [];
     currentWordEntry: string = "";
+    skyColor = 0x6BC1D6;
+    cloudList: Cloud[] = [];
     
     private acceptedChars: string = "";
     loseMessage = new MessageBox("YOU LOSE \n PLAY AGAIN? \n Y/N");
@@ -24,10 +29,12 @@ class GameScene {
     keysDownBinded = this.keysDown.bind(this);
     checkPlayAgainKeyBinded = this.checkPlayAgainKey.bind(this);
     gameLoopBinded = this.gameLoop.bind(this);
+    cloudsLoopBinded = this.cloudsLoop.bind(this);
 
     constructor(app: any) {
         this.scene = new Container();
         this.app = app;
+        this.background = new StaticBackground(this.app);
         this.acceptedChars = "abcdefghijklmnopqrstuvwxyz";
         this.acceptedChars =  this.acceptedChars + this.acceptedChars.toUpperCase();
         this.acceptedChars = this.acceptedChars + "1234567890!@#$%^&*()";
@@ -35,6 +42,32 @@ class GameScene {
 
     init () {
         this.app.stage.addChild(this.scene);
+        this.app.renderer.backgroundColor = this.skyColor;
+
+        this.background.sprite.y = this.app.screen.height - this.background.sprite.height;
+        this.scene.addChild(this.background.sprite);
+        
+        for (let x=0; x < 3; x++) {
+            let cloud = new Cloud(this.app);
+            cloud.speed = this.getRandomInt(1, 3)/6;
+            this.cloudList.push(cloud);
+        }
+
+        this.cloudList[0].sprite.x = this.getRandomInt(100, 150);
+        this.cloudList[0].sprite.y = this.getRandomInt(20, 50);
+        this.cloudList[0].sprite.scale.x = 0.9;
+        this.cloudList[0].sprite.scale.y = 0.9;
+        this.cloudList[1].sprite.x = this.getRandomInt(250, 300);
+        this.cloudList[1].sprite.y = this.getRandomInt(70, 100);
+        this.cloudList[1].sprite.scale.x = -1;
+        this.cloudList[2].sprite.x = this.getRandomInt(600, 650);
+        this.cloudList[2].sprite.y = this.getRandomInt(20, 100);
+        this.cloudList[2].sprite.scale.x = 0.8;
+        this.cloudList[2].sprite.scale.y = 0.8;
+
+        for (let x=0; x < this.cloudList.length; x++) {
+            this.scene.addChild(this.cloudList[x].sprite);
+        }
 
         for (let x=0; x < 3; x++) {
             let invader = new Invader(this.app);
@@ -52,7 +85,17 @@ class GameScene {
 
         // game loop
         this.app.ticker.add(this.gameLoopBinded);
+        this.app.ticker.add(this.cloudsLoopBinded);
         window.addEventListener("keydown", this.keysDownBinded);
+    }
+
+    private cloudsLoop(delta: number) {
+        for (let x = 0; x < this.cloudList.length; x ++) {
+            this.cloudList[x].sprite.x += this.cloudList[x].speed * delta;
+            if (this.cloudList[x].sprite.x > 900) {
+                this.cloudList[x].sprite.x = -130;
+            }
+        }
     }
 
 
@@ -86,7 +129,7 @@ class GameScene {
 
     private invaderLanded(): boolean {
         for (let x = 0; x < this.invaderList.length; x ++) {
-            if (this.invaderList[x].sprite.y > this.app.screen.height - this.invaderList[x].getHeight()) {
+            if (this.invaderList[x].sprite.y > (this.app.screen.height - 52) - this.invaderList[x].getHeight()) {
                 return true
             } 
         }
@@ -149,6 +192,7 @@ class GameScene {
         this.scene.removeChildren();
         this.app.stage.removeChild(this.scene);
         this.invaderList = [];
+        this.cloudList = [];
     }
 }
 
