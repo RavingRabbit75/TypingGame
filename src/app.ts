@@ -7,7 +7,10 @@ import StartScene from "./start_scene";
 
 const app = new PIXI.Application({
     width: 800,
-    height: 600
+    height: 600,
+    antialias: true,
+    autoDensity: true,
+    resolution: 2,
 })
 
 let mainGameElem: HTMLElement = document.getElementById("game")!;

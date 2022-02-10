@@ -6,7 +6,9 @@ import randomWords from "random-words";
 import MessageBox from "./message_box";
 import StaticBackground from "./static_background";
 import Cloud from "./cloud";
+import ScoreDisplay from "./score_display";
 import { sound } from '@pixi/sound';
+import WaveDisplay from "./wave_display";
 
 class GameScene {
     app: any;
@@ -16,6 +18,10 @@ class GameScene {
     currentWordEntry: string = "";
     skyColor = 0x6BC1D6;
     cloudList: Cloud[] = [];
+    scoreDisplay: ScoreDisplay;
+    score: number = 0;
+    waveDisplay: WaveDisplay;
+    currentWave: number = 1;
     
     private acceptedChars: string = "";
     loseMessage = new MessageBox("YOU LOSE \n PLAY AGAIN? \n Y/N");
@@ -35,6 +41,8 @@ class GameScene {
         this.scene = new Container();
         this.app = app;
         this.background = new StaticBackground(this.app);
+        this.scoreDisplay = new ScoreDisplay(this.app);
+        this.waveDisplay = new WaveDisplay(this.app);
         this.acceptedChars = "abcdefghijklmnopqrstuvwxyz";
         this.acceptedChars =  this.acceptedChars + this.acceptedChars.toUpperCase();
         this.acceptedChars = this.acceptedChars + "1234567890!@#$%^&*()";
@@ -46,6 +54,8 @@ class GameScene {
 
         this.background.sprite.y = this.app.screen.height - this.background.sprite.height;
         this.scene.addChild(this.background.sprite);
+        this.scene.addChild(this.scoreDisplay.sprite);
+        this.scene.addChild(this.waveDisplay.sprite);
         
         for (let x=0; x < 3; x++) {
             let cloud = new Cloud(this.app);
@@ -72,7 +82,7 @@ class GameScene {
         for (let x=0; x < 3; x++) {
             let invader = new Invader(this.app);
             invader.sprite.y = -60;
-            invader.sprite.x = this.getRandomInt(10, this.app.screen.width);
+            invader.sprite.x = this.getRandomInt(10, this.app.screen.width - (invader.sprite.width+10));
             invader.speed = this.getRandomInt(1,9)/10;
             invader.setWord(randomWords({exactly: 1, maxLength: 10})[0]);
             
@@ -121,6 +131,7 @@ class GameScene {
             for (let x=0; x < this.invaderList.length; x++) {
                 if (this.currentWordEntry === this.invaderList[x].word) {
                     this.resetInvader(this.invaderList[x]);
+                    this.scoreDisplay.updateScore(this.score = this.score + 100)
                 }
             }            
             this.currentWordEntry = "";
@@ -139,7 +150,7 @@ class GameScene {
 
     private resetInvader(invader: Invader) {
         invader.sprite.y = -60;
-        invader.sprite.x = this.getRandomInt(10, 290);
+        invader.sprite.x = this.getRandomInt(10, this.app.screen.width - (invader.sprite.width+10));
         invader.speed = this.getRandomInt(1,9)/10;
         invader.die();
         invader.setWord(randomWords({exactly: 1, maxLength: 10})[0]);
@@ -178,7 +189,7 @@ class GameScene {
         for (let x=0; x < 3; x++) {
             let invader = this.invaderList[x];
             invader.sprite.y = -60;
-            invader.sprite.x = this.getRandomInt(10, this.app.screen.width);
+            invader.sprite.x = this.getRandomInt(10, this.app.screen.width - (invader.sprite.width+10));
             invader.speed = this.getRandomInt(1,9)/10;
             invader.setWord(randomWords({exactly: 1, maxLength: 10})[0]);
         }
